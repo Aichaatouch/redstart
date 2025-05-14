@@ -458,6 +458,89 @@ def _(mo):
     return
 
 
+@app.cell
+def _(mo):
+    mo.md(
+        r"""
+    Nous disposons de 4 données :  
+    \( y(0) \), \( \dot{y}(0) \), \( y(5) \), \( \dot{y}(5) \)
+
+    Il nous suffit donc de disposer d’un polynôme de degré 3 (avec 4 inconnues) pour trouver une expression satisfaisant les 4 conditions.  
+    Particulièrement pour un choix de \( \theta = 0 ,\phi = 0 \), soit donc :
+
+    $$
+    y(t) = at^3 + bt^2 + ct + d
+    $$
+
+    Conditions :
+    \( y(0) = 10 \)
+    , \( \dot{y}(0) = -2 \)
+    , \( y(5) = 1 \)
+    , \( \dot{y}(5) = 0 \)
+
+    Nous obtenons :
+    \( a = \frac{8}{125} \)
+    , \( b = \frac{7}{25} \)
+    , \( c = -2 \)
+    , \( d = 10 \)
+
+    ---
+
+    Et de plus, d’après \( \dot{X} = f(t, X) \),  
+    on montre que :
+
+    $$
+    f(t) = \ddot{y}(t) = 6at + 2b
+    $$
+
+    On peut donc prendre :
+
+    $$
+    f(t) = 48/125 t + 14/25
+    $$
+
+    ---
+
+    Expression finale de \( y(t) \) :
+
+    $$
+    y(t) = -\frac{28}{125} t^3 + \frac{27}{25} t^2 - 2t + 10
+    $$
+
+    Et on a le résultat voulu.
+
+    """
+    )
+    return
+
+
+@app.cell
+def _(np, plt):
+    a = 8 / 125
+    b = -7 / 25
+    c = -2
+    d = 10
+
+    # Définition de la fonction y(t)
+    def y(t):
+        return a * t**3 + b * t**2 + c * t + d
+
+    # Plage de t de 0 à 5
+    t_vals = np.linspace(0, 5, 200)
+    y_vals = y(t_vals)
+
+    # Tracé
+    plt.figure(figsize=(8, 4))
+    plt.plot(t_vals, y_vals, label='y(t)', color='blue')
+    plt.title('Tracé de y(t) = at³ + bt² + ct + d')
+    plt.xlabel('t')
+    plt.ylabel('y(t)')
+    plt.grid(True)
+    plt.legend()
+    plt.show()
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
