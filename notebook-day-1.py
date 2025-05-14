@@ -238,8 +238,6 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-
-
     $$
     f_x = -f \sin(\theta + \phi), \quad f_y = f \cos(\theta + \phi)
     $$
@@ -249,9 +247,6 @@ def _(mo):
     $$
     (\ddot{x}, \ddot{y}) = (f_x, f_y - 1)
     $$
-
-
-
     """
     )
     return
@@ -276,7 +271,6 @@ def _(mo):
     $$
     (\ddot{x} , \ddot{y}) = (fx, fy - 1) 
     $$
-
     """
     )
     return
@@ -310,8 +304,6 @@ def _(mo):
     $$
     J = \frac{1}{3}
     $$
-
-
     """
     )
     return
@@ -350,7 +342,6 @@ def _(mo):
     $$
     \boxed{\ddot{\theta} = -3f \cdot \sin(\varphi)}
     $$
-
     """
     )
     return
@@ -508,7 +499,6 @@ def _(mo):
     $$
 
     Et on a le résultat voulu.
-
     """
     )
     return
@@ -552,6 +542,66 @@ def _(mo):
     The drawing can be very simple (a rectangle for the body and another one of a different color for the flame will do perfectly!).
     """
     )
+    return
+
+
+@app.cell
+def _(np, plt):
+
+    def draw_booster(x, y, theta, title):
+        # Create the plot
+        fig, ax = plt.subplots(figsize=(8, 6))
+
+        # Plot the target landing zone
+        ax.scatter(0, 0, color='red', s=100, label='Target Landing Zone')
+
+        # Define the booster body dimensions
+        body_length = 1.0
+        body_height = 2.0
+
+        # Define the corners of the booster body
+        corners = np.array([[-body_length/2, -body_length/2, body_length/2, body_length/2],
+                            [0, body_height, body_height, 0]])
+
+        # Rotation matrix for angle theta
+        rot_matrix = np.array([[np.cos(theta), -np.sin(theta)],
+                               [np.sin(theta), np.cos(theta)]])
+
+        # Apply the rotation
+        rotated_corners = rot_matrix @ corners
+        rotated_corners[0, :] += x
+        rotated_corners[1, :] += y
+
+        # Draw the booster body
+        ax.fill(rotated_corners[0, :], rotated_corners[1, :], color='blue', label='Booster Body')
+
+        # Define the flame dimensions
+        flame_length = 0.6
+        flame_height = 1.5
+
+        # Define the flame shape
+        flame = np.array([[0, -flame_length/2, flame_length/2],
+                          [-flame_height, 0, 0]])
+
+        # Apply the same rotation to the flame
+        rotated_flame = rot_matrix @ flame
+        rotated_flame[0, :] += x
+        rotated_flame[1, :] += y
+
+        # Draw the flame
+        ax.fill(rotated_flame[0, :], rotated_flame[1, :], color='orange', label='Reactor Flame')
+
+        # Set plot limits and labels
+        ax.set_xlim(-5, 5)
+        ax.set_ylim(-2, 12)
+        ax.set_aspect('equal')
+        ax.set_xlabel('Horizontal Position (m)')
+        ax.set_ylabel('Vertical Position (m)')
+        ax.set_title(title)
+        ax.grid(True)
+        ax.legend()
+
+        plt.show()
     return
 
 
