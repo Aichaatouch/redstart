@@ -59,19 +59,19 @@ def _(mo):
 def _():
     import scipy
     import scipy.integrate as sci
-
+    from scipy.integrate import solve_ivp
     import matplotlib as mpl
     import matplotlib.pyplot as plt
     from matplotlib.animation import FuncAnimation, FFMpegWriter
-
+    import numpy as np
     from tqdm import tqdm
-
+    from scipy.interpolate import interp1d
     # The use of autograd is optional in this project, but it may come in handy!
     import autograd
     import autograd.numpy as np
     import autograd.numpy.linalg as la
     from autograd import isinstance, tuple
-    return FFMpegWriter, FuncAnimation, np, plt, tqdm
+    return FFMpegWriter, FuncAnimation, np, plt, solve_ivp, tqdm
 
 
 @app.cell(hide_code=True)
@@ -213,6 +213,15 @@ def _(mo):
     return
 
 
+@app.cell
+def _():
+    g=1
+    M=1
+    l=1
+
+    return (l,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
@@ -220,6 +229,29 @@ def _(mo):
     ## 🧩 Forces
 
     Compute the force $(f_x, f_y) \in \mathbb{R}^2$ applied to the booster by the reactor.
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+
+
+    $$
+    f_x = -f \sin(\theta + \phi), \quad f_y = f \cos(\theta + \phi)
+    $$
+
+    Et :
+
+    $$
+    (\ddot{x}, \ddot{y}) = (f_x, f_y - 1)
+    $$
+
+
+
     """
     )
     return
@@ -241,6 +273,19 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
+    $$
+    (\ddot{x} , \ddot{y}) = (fx, fy - 1) 
+    $$
+
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
     ## 🧩 Moment of inertia
 
     Compute the moment of inertia $J$ of the booster and define the corresponding Python variable `J`.
@@ -253,9 +298,59 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
+    Puisque la barre est considérée tourner autour de son centre, on utilise l'expression du moment cinétique suivante :
+
+
+    $$
+    J = \frac{1}{12} m (2*l)^2
+    $$
+
+    Donc avec \( m = 1 \) et \( l = 1 \) :
+
+    $$
+    J = \frac{1}{3}
+    $$
+
+
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
     ## 🧩 Tilt
 
     Give the ordinary differential equation that governs the tilt angle $\theta$.
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    On a l'équation :
+
+    $$
+    \ddot{\theta} = \frac{-3 \cdot l}{M \cdot l^2} \cdot \sin(\varphi)
+    $$
+
+    Ce qui se simplifie en :
+
+    $$
+    \ddot{\theta} = \frac{-3}{M \cdot l} \cdot \sin(\varphi)
+    $$
+
+    Donc, on a finalement :
+
+    $$
+    \boxed{\ddot{\theta} = -3f \cdot \sin(\varphi)}
+    $$
+
     """
     )
     return
@@ -302,6 +397,50 @@ def _(mo):
     Test this typical example with your function `redstart_solve` and check that its graphical output makes sense.
     """
     )
+    return
+
+
+@app.cell
+def _(l, np, plt, solve_ivp):
+
+
+    def free_fall_example():
+        t_span = [0.0, 5.0]
+        y0 = [0.0, 0.0, 10.0, 0.0, 0.0, 0.0]  # [x, dx, y, dy, theta, dtheta]
+
+        def f_phi(t, y):
+            return np.array([0.0, 0.0])  # pas de poussée
+
+        def f(t, y):
+            x, dx, yp, dy, theta, dtheta = y
+            f_val, phi = f_phi(t, y)
+
+            fx = -f_val * np.sin(theta + phi)
+            fy = f_val * np.cos(theta + phi)
+
+            ddx = fx
+            ddy = fy - 1
+            ddtheta = -3 * f_val * np.sin(phi)
+
+            return [dx, ddx, dy, ddy, dtheta, ddtheta]
+
+        # Résolution avec solve_ivp + interpolation
+        t_eval = np.linspace(t_span[0], t_span[1], 1000)
+        sol_ivp = solve_ivp(f, t_span, y0, t_eval=t_eval)
+
+        y_t = sol_ivp.y[2]  # position verticale y
+
+        plt.plot(t_eval, y_t, label=r"$y(t)$ (height in meters)")
+        plt.plot(t_eval, l * np.ones_like(t_eval), color="grey", ls="--", label=r"$y=\ell$")
+        plt.title("Free Fall")
+        plt.xlabel("time $t$")
+        plt.grid(True)
+        plt.legend()
+        return plt.gcf()
+
+    free_fall_example()
+
+
     return
 
 
