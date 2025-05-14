@@ -5,6 +5,16 @@ authors:
   given-names: "Sébastien"
   orcid: "https://orcid.org/0000-0003-4685-8099"
 title: "Redstart"
+authors:
+- family-names: "EL AMARI"
+  given-names: "Soulaimane"
+- family-names: "ATOUCH"
+  given-names: "Aicha"
+- family-names: "TAHFI"
+  given-names: "Othmane"
+- family-names: "EL BARAKA"
+  given-names: "Mohammed"
+
 version: 0.0.1
 date-released: 2025-05-14
 url: "https://github.com/boisgera/redstart"
