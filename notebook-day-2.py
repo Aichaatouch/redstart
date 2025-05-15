@@ -1087,7 +1087,7 @@ def _(mo):
     return
 
 
-@app.cell(hide_code=True)
+@app.cell
 def _(mo):
     mo.md(
         r"""
@@ -1116,9 +1116,9 @@ def _(mo):
 
     \[
     \begin{cases}
-    \ddot{x} = -\frac{f}{M} \sin(\theta + \varphi) \\
-    \ddot{y} = \frac{f}{M} \cos(\theta + \varphi) - g \\
-    \ddot{\theta} = -\frac{3f}{4M\ell} \sin(\varphi)
+    \ddot{x} = -f \sin(\theta + \varphi) \\
+    \ddot{y} = f \cos(\theta + \varphi) - 1 \\
+    \ddot{\theta} = -3f \sin(\varphi)
     \end{cases}
     \]
 
@@ -1141,11 +1141,11 @@ def _(mo):
     \underbrace{
     \begin{bmatrix}
     \dot{x} \\
-    -\frac{f}{M} \sin(\theta + \varphi) \\
+    -f \sin(\theta + \varphi) \\
     \dot{y} \\
-    \frac{f}{M} \cos(\theta + \varphi) - g \\
+    f \cos(\theta + \varphi) - 1 \\
     \dot{\theta} \\
-    -\frac{3f}{4M\ell} \sin(\varphi)
+    -3f\sin(\varphi)
     \end{bmatrix}
     }_{F(X,u)}
     \]
@@ -1157,7 +1157,7 @@ def _(mo):
     On a l’équilibre \( (y_e, u_e) \) tel que :
 
     \[
-    \theta = 0, \quad \varphi = 0, \quad f = Mg
+    \theta = 0, \quad \varphi = 0, \quad f = Mg=1
     \]
 
     \[
@@ -1179,7 +1179,7 @@ def _(mo):
     \quad
     u_e =
     \begin{bmatrix}
-    Mg \\
+    1 \\
     0
     \end{bmatrix}
     \]
