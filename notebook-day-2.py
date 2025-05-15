@@ -1539,7 +1539,7 @@ def _(mo):
     return
 
 
-@app.cell(hide_code=True)
+@app.cell
 def _(mo):
     mo.md(
         r"""
@@ -1551,7 +1551,7 @@ def _(mo):
     A_r = 
     \begin{pmatrix}
     0 & 1 & 0 & 0 \\
-    0 & 0 & 1 & 0 \\
+    0 & 0 & -g & 0 \\
     0 & 0 & 0 & 1 \\
     0 & 0 & 0 & 0
     \end{pmatrix}
