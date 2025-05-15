@@ -959,6 +959,121 @@ def _(mo):
     return
 
 
+@app.cell
+def _(mo):
+    mo.md(
+        r"""
+
+
+    on a :
+
+    \[
+    X = \begin{pmatrix}
+    x \\
+    \dot{x} \\
+    y \\
+    \dot{y} \\
+    \theta \\
+    \dot{\theta}
+    \end{pmatrix}
+    \]
+
+    La dérivée du vecteur d’état s’écrit :
+
+    \[
+    \dot{X} = \begin{pmatrix}
+    \dot{x} \\
+    f \sin(\theta + \phi) \\
+    \dot{y} \\
+    f \cos(\theta + \phi) - g \\
+    \dot{\theta} \\
+    -3f \sin(\phi)
+    \end{pmatrix}
+    \]
+
+    On note :
+
+    \[
+    \dot{X} = f(X, u)
+    \quad \text{avec} \quad u = \begin{pmatrix} f \\ \phi \end{pmatrix}
+    \]
+    ## Recherche de l’état d’équilibre
+
+    Un état d’équilibre est tel que :
+
+    \[
+    \dot{X} = 0
+    \]
+
+    Ce qui donne le système :
+
+    \[
+    \begin{cases}
+    \dot{x} = 0 \\
+    f \sin(\theta + \phi) = 0 \\
+    \dot{y} = 0 \\
+    f \cos(\theta + \phi) - g = 0 \\
+    \dot{\theta} = 0 \\
+    -3f \sin(\phi) = 0
+    \end{cases}
+    \]
+
+    On obtient alors :
+
+    \[
+    \begin{aligned}
+    &x, y, \theta = \text{constantes} \\
+    &f \sin(\theta + \phi) = 0 \Rightarrow \boxed{f = 0 \text{ ou } \sin(\theta + \phi) = 0} \\
+    &f \cos(\theta + \phi) = g \\
+    &\sin(\phi) = 0 \Rightarrow \boxed{\phi = 0 \text{  } }
+    \end{aligned}
+    \]
+
+    Analysons les deux cas :
+
+    ### Cas 1 : \( f = 0 \)
+    Alors :
+
+    - \( f \cos(\theta + \phi) = 0 \Rightarrow g = 0 \), ce qui est impossible.
+    Donc ce cas est à rejeter.
+
+    ### Cas 2 : \( \sin(\theta + \phi) = 0  \)
+
+    Et puisque  $|\theta| < \pi/2$, $|\phi| < \pi/2$ , on a :
+
+    - \( \theta + \phi = 0 \)
+
+    Mais aussi :
+
+    - \( \sin(\phi) = 0 \Rightarrow \phi = 0 \text{ }  \)
+
+    Pour satisfaire à la fois \( \theta + \phi = 0 \) et \( \phi = 0 \), on trouve :
+
+    \[
+    \boxed{\theta = 0 \quad \text{et} \quad \phi = 0}
+    \]
+
+    Et donc :
+
+    \[
+    f = g
+    \]
+
+    L’état d’équilibre est atteint pour :
+
+    \[
+    \boxed{
+    x=constante  , \quad \dot{x} = 0  , \quad y=constante,\quad\dot{y} = 0  , \quad \theta = 0  ,  \quad\dot{\theta} = 0  ,  \quad \phi = 0 , \quad f = g
+    }
+    \]
+
+    Ce qui correspond à une position verticale.
+
+    """
+    )
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
