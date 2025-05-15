@@ -965,7 +965,7 @@ def _(mo):
         r"""
 
 
-    on a :
+    On a :
 
     \[
     X = \begin{pmatrix}
@@ -983,11 +983,11 @@ def _(mo):
     \[
     \dot{X} = \begin{pmatrix}
     \dot{x} \\
-    f \sin(\theta + \phi) \\
+    \frac{-f}{M} \sin(\theta + \phi) \\
     \dot{y} \\
-    f \cos(\theta + \phi) - g \\
+    \frac{f}{M} \cos(\theta + \phi) - g \\
     \dot{\theta} \\
-    -3f \sin(\phi)
+    -\frac{3f}{Ml} \sin(\phi)
     \end{pmatrix}
     \]
 
@@ -997,7 +997,8 @@ def _(mo):
     \dot{X} = f(X, u)
     \quad \text{avec} \quad u = \begin{pmatrix} f \\ \phi \end{pmatrix}
     \]
-    ## Recherche de l’état d’équilibre
+
+
 
     Un état d’équilibre est tel que :
 
@@ -1010,11 +1011,11 @@ def _(mo):
     \[
     \begin{cases}
     \dot{x} = 0 \\
-    f \sin(\theta + \phi) = 0 \\
+    \frac{f}{M} \sin(\theta + \phi) = 0 \\
     \dot{y} = 0 \\
-    f \cos(\theta + \phi) - g = 0 \\
+    \frac{f}{M} \cos(\theta + \phi) - g = 0 \\
     \dot{\theta} = 0 \\
-    -3f \sin(\phi) = 0
+    -\frac{3f}{Ml} \sin(\phi) = 0
     \end{cases}
     \]
 
@@ -1023,29 +1024,32 @@ def _(mo):
     \[
     \begin{aligned}
     &x, y, \theta = \text{constantes} \\
-    &f \sin(\theta + \phi) = 0 \Rightarrow \boxed{f = 0 \text{ ou } \sin(\theta + \phi) = 0} \\
-    &f \cos(\theta + \phi) = g \\
-    &\sin(\phi) = 0 \Rightarrow \boxed{\phi = 0 \text{  } }
+    &\frac{f}{M} \sin(\theta + \phi) = 0 \Rightarrow \boxed{f = 0 \text{ ou } \sin(\theta + \phi) = 0} \\
+    &\frac{f}{M} \cos(\theta + \phi) = g \\
+    &\sin(\phi) = 0 \Rightarrow \boxed{\phi = 0}
     \end{aligned}
     \]
 
-    Analysons les deux cas :
+    ---
 
     ### Cas 1 : \( f = 0 \)
+
     Alors :
 
-    - \( f \cos(\theta + \phi) = 0 \Rightarrow g = 0 \), ce qui est impossible.
+    - \( \frac{f}{M} \cos(\theta + \phi) = 0 \Rightarrow g = 0 \), ce qui est impossible.
     Donc ce cas est à rejeter.
 
-    ### Cas 2 : \( \sin(\theta + \phi) = 0  \)
+    ---
 
-    Et puisque  $|\theta| < \pi/2$, $|\phi| < \pi/2$ , on a :
+    ### Cas 2 : \( \sin(\theta + \phi) = 0 \)
+
+    Et puisque \( |\theta| < \pi/2 \), \( |\phi| < \pi/2 \), on a :
 
     - \( \theta + \phi = 0 \)
 
     Mais aussi :
 
-    - \( \sin(\phi) = 0 \Rightarrow \phi = 0 \text{ }  \)
+    - \( \sin(\phi) = 0 \Rightarrow \phi = 0 \)
 
     Pour satisfaire à la fois \( \theta + \phi = 0 \) et \( \phi = 0 \), on trouve :
 
@@ -1056,18 +1060,23 @@ def _(mo):
     Et donc :
 
     \[
-    f = g
+    \frac{f}{M} = g \Rightarrow \boxed{f = Mg}
     \]
+
+    ---
+
+    ### État d’équilibre
 
     L’état d’équilibre est atteint pour :
 
     \[
     \boxed{
-    x=constante  , \quad \dot{x} = 0  , \quad y=constante,\quad\dot{y} = 0  , \quad \theta = 0  ,  \quad\dot{\theta} = 0  ,  \quad \phi = 0 , \quad f = g
+    x=constante  , \quad \dot{x} = 0  , \quad y=constante,\quad\dot{y} = 0  , \quad \theta = 0  ,  \quad\dot{\theta} = 0  ,  \quad \phi = 0 , \quad f = Mg
     }
     \]
 
-    Ce qui correspond à une position verticale.
+    Ce qui correspond à une position verticale en équilibre.
+
 
     """
     )
@@ -1087,12 +1096,10 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
-
-
     On a :
 
     \[
@@ -1116,14 +1123,13 @@ def _(mo):
 
     \[
     \begin{cases}
-    \ddot{x} = -f \sin(\theta + \varphi) \\
-    \ddot{y} = f \cos(\theta + \varphi) - 1 \\
-    \ddot{\theta} = -3f \sin(\varphi)
+    \ddot{x} = -\frac{f}{M} \sin(\theta + \varphi) \\
+    \ddot{y} = \frac{f}{M} \cos(\theta + \varphi) - g \\
+    \ddot{\theta} = -\frac{3f}{Ml} \sin(\varphi)
     \end{cases}
     \]
 
     ---
-
 
     \[
     \frac{d}{dt}
@@ -1141,23 +1147,21 @@ def _(mo):
     \underbrace{
     \begin{bmatrix}
     \dot{x} \\
-    -f \sin(\theta + \varphi) \\
+    -\frac{f}{M} \sin(\theta + \varphi) \\
     \dot{y} \\
-    f \cos(\theta + \varphi) - 1 \\
+    \frac{f}{M} \cos(\theta + \varphi) - g \\
     \dot{\theta} \\
-    -3f\sin(\varphi)
+    -\frac{3f}{Ml}\sin(\varphi)
     \end{bmatrix}
     }_{F(X,u)}
     \]
 
     ---
 
-
-
-    On a l’équilibre \( (y_e, u_e) \) tel que :
+    On a l’équilibre \( (X_e, u_e) \) tel que :
 
     \[
-    \theta = 0, \quad \varphi = 0, \quad f = Mg=1
+    \theta = 0, \quad \varphi = 0, \quad f = Mg
     \]
 
     \[
@@ -1179,12 +1183,14 @@ def _(mo):
     \quad
     u_e =
     \begin{bmatrix}
-    1 \\
+    Mg \\
     0
     \end{bmatrix}
     \]
 
-     De tout système dynamique ayant un équilibre (Xe,ue), nous pouvons définir le système linéaire suivant:
+    ---
+
+    De tout système dynamique ayant un équilibre \( (X_e, u_e) \), nous pouvons définir le système linéaire suivant :
 
     \[
     \Delta X = X - X_e, \quad \Delta u = u - u_e
@@ -1225,6 +1231,80 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
+    On a :
+
+    \[
+    F(X, u) =
+    \begin{bmatrix}
+    \dot{x} \\
+    -\frac{f}{M} \sin(\theta + \varphi) \\
+    \dot{y} \\
+    \frac{f}{M} \cos(\theta + \varphi) - g \\
+    \dot{\theta} \\
+    -\frac{3f}{Ml} \sin(\varphi)
+    \end{bmatrix}
+    \]
+
+    ---
+
+    ## Matrice \( A = \frac{\partial F}{\partial X} \Big|_{X_e, u_e} \)
+
+    Les dérivées partielles par rapport à \( X = (x, \dot{x}, y, \dot{y}, \theta, \dot{\theta}) \) :
+
+    - \( \frac{\partial}{\partial \theta} \left( -\frac{f}{M} \sin(\theta + \varphi) \right) = -\frac{f}{M} \cos(\theta + \varphi) \rightarrow -g \)
+    - \( \frac{\partial}{\partial \theta} \left( \frac{f}{M} \cos(\theta + \varphi) \right) = -\frac{f}{M} \sin(\theta + \varphi) \rightarrow 0 \)
+    - Les autres dérivées sont nulles.
+
+    Donc :
+
+    \[
+    A =
+    \begin{bmatrix}
+    0 & 1 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & -g & 0 \\
+    0 & 0 & 0 & 1 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 1 \\
+    0 & 0 & 0 & 0 & 0 & 0
+    \end{bmatrix}
+    \]
+
+    ---
+
+    ## Matrice \( B = \frac{\partial F}{\partial u} \Big|_{X_e, u_e} \)
+
+    Avec \( u = (f, \varphi) \) :
+
+    - \( \frac{\partial}{\partial f} \left( -\frac{f}{M} \sin(\theta + \varphi) \right) = -\frac{1}{M} \sin(\theta + \varphi) \rightarrow 0 \)
+    - \( \frac{\partial}{\partial \varphi} \left( -\frac{f}{M} \sin(\theta + \varphi) \right) = -\frac{f}{M} \cos(\theta + \varphi) \rightarrow -g \)
+    - \( \frac{\partial}{\partial f} \left( \frac{f}{M} \cos(\theta + \varphi) \right) = \frac{1}{M} \cos(\theta + \varphi) \rightarrow \frac{1}{M} \)
+    - \( \frac{\partial}{\partial \varphi} \left( \frac{f}{M} \cos(\theta + \varphi) \right) = -\frac{f}{M} \sin(\theta + \varphi) \rightarrow 0 \)
+    - \( \frac{\partial}{\partial f} \left( -\frac{3f}{Ml} \sin(\varphi) \right) = -\frac{3}{Ml} \sin(\varphi) \rightarrow 0 \)
+    - \( \frac{\partial}{\partial \varphi} \left( -\frac{3f}{Ml} \sin(\varphi) \right) = -\frac{3f}{Ml} \cos(\varphi) \rightarrow -\frac{3g}{l} \)
+
+    Donc :
+
+    \[
+    B =
+    \begin{bmatrix}
+    0 & 0 \\
+    0 & -g \\
+    0 & 0 \\
+    \frac{1}{M} & 0 \\
+    0 & 0 \\
+    0 & -\frac{3g}{l}
+    \end{bmatrix}
+    \]
+
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
     ## 🧩 Stability
 
     Is the generic equilibrium asymptotically stable?
@@ -1237,9 +1317,195 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
+    D’après le critère de stabilité,le système est stable si les parties réelles de toutes les valeurs propres de la matrice A sont  
+    strictement négatives?.
+    Ici A est triangulaire supérieure, les  
+    valeurs propres sont donc toutes nulles.
+    A ne vérifie donc pas le critère de stabilité.  
+    Le systeme n'est donc pas stable.
+
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
     ## 🧩 Controllability
 
     Is the linearized model controllable?
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    Étude de la contrôlabilité:
+
+    D'après le critère de KALMAN le rang de la matrice suivante = 6:
+
+
+
+    \[
+    \mathcal{C} =
+    \left[
+    B \; \middle|\;
+    AB \; \middle|\;
+    A^2B \; \middle|\;
+    A^3B \; \middle|\;
+    A^4B \; \middle|\;
+    A^5B
+    \right]
+    \
+    \]
+
+    Nous avons :
+
+    \[
+    A =
+    \begin{bmatrix}
+    0 & 1 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & -g & 0 \\
+    0 & 0 & 0 & 1 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 1 \\
+    0 & 0 & 0 & 0 & 0 & 0
+    \end{bmatrix}, \quad
+    B =
+    \begin{bmatrix}
+    0 & 0 \\
+    0 & -g \\
+    0 & 0 \\
+    \frac{1}{M} & 0 \\
+    0 & 0 \\
+    0 & -\frac{3g}{l}
+    \end{bmatrix}
+    \]
+
+
+    Calcul de \( AB \):
+
+    \[
+    AB = A \cdot B =
+    \begin{bmatrix}
+    0 & -g \\
+    g^2 & 0 \\
+    \frac{1}{M} & 0 \\
+    0 & 0 \\
+    0 & -\frac{3g}{l} \\
+    0 & 0
+    \end{bmatrix}
+    \]
+
+
+
+    Calcul de \( A^2B \):
+
+    \[
+    A^2B = A \cdot AB =
+    \begin{bmatrix}
+    g^2 & 0 \\
+    0 & g^2 \\
+    0 & 0 \\
+    0 & -\frac{3g}{l} \\
+    0 & 0 \\
+    0 & 0
+    \end{bmatrix}
+    \]
+
+
+
+    Calcul de \( A^3B \):
+
+    \[
+    A^3B = A \cdot A^2B =
+    \begin{bmatrix}
+    0 & g^2 \\
+    -g^3 & 0 \\
+    0 & -\frac{3g}{l} \\
+    0 & 0 \\
+    0 & 0 \\
+    0 & 0
+    \end{bmatrix}
+    \]
+
+
+
+    Calcul de \( A^4B \):
+
+    \[
+    A^4B = A \cdot A^3B =
+    \begin{bmatrix}
+    -g^3 & 0 \\
+    0 & -g^3 \\
+    0 & 0 \\
+    0 & 0 \\
+    0 & 0 \\
+    0 & 0
+    \end{bmatrix}
+    \]
+
+
+
+    Calcul de \( A^5B \):
+
+    \[
+    A^5B = A \cdot A^4B =
+    \begin{bmatrix}
+    0 & -g^3 \\
+    g^4 & 0 \\
+    0 & 0 \\
+    0 & 0 \\
+    0 & 0 \\
+    0 & 0
+    \end{bmatrix}
+    \]
+
+
+    La Matrice de contrôlabilité :
+
+
+    \[
+    \mathcal{C} =
+    \left[
+    B \; \middle|\;
+    AB \; \middle|\;
+    A^2B \; \middle|\;
+    A^3B \; \middle|\;
+    A^4B \; \middle|\;
+    A^5B
+    \right]
+    \in \mathbb{R}^{6 \times 12}
+    \]
+
+    \[
+    \mathcal{C} =
+    \begin{bmatrix}
+    0 & 0 & 0 & -g & g^2 & 0 & 0 & g^2 & -g^3 & 0 & 0 & -g^3 \\
+    0 & -g & g^2 & 0 & 0 & g^2 & -g^3 & 0 & 0 & -g^3 & g^4 & 0 \\
+    0 & 0 & \frac{1}{M} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    \frac{1}{M} & 0 & 0 & 0 & 0 & -\frac{3g}{l} & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & -\frac{3g}{l} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & -\frac{3g}{l} & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0
+    \end{bmatrix}
+    \]
+
+    Nous observons que les 6 lignes sont **linéairement indépendantes** : on vérifie directement que la matrice est de rang = 6
+
+
+    \[
+    \Rightarrow \boxed{\text{rang}(\mathcal{C}) = 6}
+    \]
+
+
+
+    Le système linéarisé est contrôlable
+
     """
     )
     return
