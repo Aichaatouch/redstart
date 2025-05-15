@@ -59,7 +59,7 @@ def _(mo):
 def _():
     import scipy
     import scipy.integrate as sci
-
+    import numpy as np
     import matplotlib as mpl
     import matplotlib.pyplot as plt
     from matplotlib.animation import FuncAnimation, FFMpegWriter
@@ -71,7 +71,7 @@ def _():
     import autograd.numpy as np
     import autograd.numpy.linalg as la
     from autograd import isinstance, tuple
-    return FFMpegWriter, FuncAnimation, mpl, np, plt, scipy, tqdm
+    return FFMpegWriter, FuncAnimation, mpl, np, plt, sci, scipy, tqdm
 
 
 @app.cell(hide_code=True)
@@ -1202,6 +1202,19 @@ def _(mo):
     \frac{d}{dt} \Delta X \approx A \Delta X + B \Delta u
     \]
 
+
+    Les équations du système linéarisé sont :
+
+    \[
+    \begin{cases}
+    \Delta \ddot{x} = -g ( \theta +  \varphi) \\
+    \Delta \ddot{y} = \frac{f}{M} - g \\
+    \Delta \ddot{\theta} = -\frac{3 g}{l}  \varphi
+    \end{cases}
+    \]
+
+
+
     où :
 
     \[
@@ -1530,12 +1543,199 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
+    # Analyse de la contrôlabilité du système
+
+    Les matrices réduites \( A_r \) et \( B_r \) s'écrivent comme suit :
+
+    \[
+    A_r = 
+    \begin{pmatrix}
+    0 & 1 & 0 & 0 \\
+    0 & 0 & 1 & 0 \\
+    0 & 0 & 0 & 1 \\
+    0 & 0 & 0 & 0
+    \end{pmatrix}
+    \quad
+    B_r = 
+    \begin{pmatrix}
+    0&-1 \\
+    0&0 \\
+    0&\frac{-3g}{l} \\
+    0&0 \\
+    \end{pmatrix}
+    \]
+
+    Le critère de **Kalman** donne la stabilité sous condition d'avoir :
+
+    \[
+    \text{rg}(C) = 4, \quad \text{avec} \quad 
+    C = \left[ B, AB, A^2B, A^3B \right]
+    \]
+
+    \[
+    C = 
+    \begin{pmatrix}
+    0 & 0 & 0 & -1 & 0 & 0 &0 & -\frac{3g^2}{\ell} \\
+    0 & -1 & 0 & 0 & 0& -\frac{3g^2}{\ell} & 0& 0 \\
+    0 & 0 & 0 & -\frac{3g}{\ell} & 0 & 0& 0 & 0 \\
+    0 &-\frac{-3g}{\ell} & 0 & 0 & 0 & 0 & 0& 0
+    \end{pmatrix}
+    \]
+
+    Effectivement, \( \text{rg}(C) = 4 \), **le système est donc contrôlable**.
+
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
     ## 🧩 Linear Model in Free Fall
 
     Make graphs of $y(t)$ and $\theta(t)$ for the linearized model when $\phi(t)=0$,
     $x(0)=0$, $\dot{x}(0)=0$, $\theta(0) = 45 / 180  \times \pi$  and $\dot{\theta}(0) =0$. What do you see? How do you explain it?
     """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+
+
+    On considère les matrices :
+
+    \[
+    A_r = \begin{pmatrix}
+    0 & 1 & 0 & 0 \\
+    0 & 0 & -g & 0 \\
+    0 & 0 & 0 & 1 \\
+    0 & 0 & \frac{3g}{\ell} & 0
+    \end{pmatrix}, \quad
+    B_r = \begin{pmatrix}
+    0 & -1 \\
+    0 &0 \\
+    0 & -\frac{3g}{l}\\
+    0& 0 \\
+    \end{pmatrix}
+    \]
+
+    ## Évolution de l'état du système
+
+    On considère une perturbation de l'état \(\Delta X\) et une commande \(\Delta u\), alors :
+
+    \[
+    A_r \cdot \Delta X =
+    \begin{pmatrix}
+    0 & 1 & 0 & 0 \\
+    0 & 0 & -g & 0 \\
+    0 & 0 & 0 & 1 \\
+    0 & 0 & 0 & 0
+    \end{pmatrix}
+    \begin{pmatrix}
+    x \\
+    \dot{x} \\
+    \theta   \\
+    \dot{\theta}
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+    \dot{x} \\
+    -g\theta \\
+    \dot{\theta} \\
+    0
+    \end{pmatrix}
+    \]
+
+    \[
+    B_r \cdot \Delta u =
+    \begin{pmatrix}
+    0&0 \\
+    0&-1 \\
+    0&0 \\
+    0&-\frac{3g}{l}
+    \end{pmatrix}
+    \begin{pmatrix}
+    0 \\
+    \varphi \\
+    \end{pmatrix}=
+    \begin{pmatrix}
+    0 \\
+    -\varphi \\
+    0 \\
+    -\frac{3g}{\ell} \varphi
+    \end{pmatrix}
+    \]
+
+    Donc :
+
+    \[
+    \Delta \dot{X} = A_r \cdot \Delta X + B_r \cdot \Delta u
+    =
+    \begin{pmatrix}
+    \dot{x} \\
+    -g\theta - \varphi \\
+    \dot{\theta} \\
+    \frac{3g}{\ell} \varphi
+    \end{pmatrix}
+    \]
+
+
+    Alors :
+
+    \[
+    \ddot{x} = -g\theta
+    \]
+
+    \[
+    \ddot{\theta} = 0
+    \]
+
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(g, np, plt, sci):
+
+    # Système différentiel
+    def system(t, y):
+        x, dx, theta, dtheta = y
+        return [dx, -g * theta, dtheta, 0]
+
+    # Conditions initiales : x(0), x'(0), theta(0), theta'(0)
+    y0 = [0.0, 0.0, (np.pi)/4, 0.0]  # Exemple : petite oscillation initiale pour theta
+
+    # Intervalle de temps
+    t_span = (0, 10)
+    t_eval = np.linspace(t_span[0], t_span[1], 500)
+
+    # Résolution numérique
+    sol = sci.solve_ivp(system, t_span, y0, t_eval=t_eval)
+
+    # Tracé des courbes
+    plt.figure(figsize=(10, 5))
+
+    plt.subplot(1, 2, 1)
+    plt.plot(sol.t, sol.y[0], label='x(t)', color='blue')
+    plt.xlabel('Temps [s]')
+    plt.ylabel('x(t)')
+    plt.title('Position x(t)')
+    plt.grid()
+    plt.legend()
+
+    plt.subplot(1, 2, 2)
+    plt.plot(sol.t, sol.y[2], label='theta(t)', color='orange')
+    plt.xlabel('Temps [s]')
+    plt.ylabel('theta(t) [rad]')
+    plt.title('Angle theta(t)')
+
     return
 
 
