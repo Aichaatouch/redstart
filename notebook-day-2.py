@@ -959,7 +959,7 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
@@ -1082,6 +1082,127 @@ def _(mo):
 
     Introduce the error variables $\Delta x$, $\Delta y$, $\Delta \theta$, and $\Delta f$ and $\Delta \phi$ of the state and input values with respect to the generic equilibrium configuration.
     What are the linear ordinary differential equations that govern (approximately) these variables in a neighbourhood of the equilibrium?
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+
+
+    On a :
+
+    \[
+    X = 
+    \begin{bmatrix}
+    x \\
+    \dot{x} \\
+    y \\
+    \dot{y} \\
+    \theta \\
+    \dot{\theta}
+    \end{bmatrix}, \quad 
+    \text{entrée } u = 
+    \begin{bmatrix}
+    f \\
+    \varphi
+    \end{bmatrix}
+    \]
+
+    Les équations sont :
+
+    \[
+    \begin{cases}
+    \ddot{x} = -\frac{f}{M} \sin(\theta + \varphi) \\
+    \ddot{y} = \frac{f}{M} \cos(\theta + \varphi) - g \\
+    \ddot{\theta} = -\frac{3f}{4M\ell} \sin(\varphi)
+    \end{cases}
+    \]
+
+    ---
+
+
+    \[
+    \frac{d}{dt}
+    \underbrace{
+    \begin{bmatrix}
+    x \\
+    \dot{x} \\
+    y \\
+    \dot{y} \\
+    \theta \\
+    \dot{\theta}
+    \end{bmatrix}
+    }_{X}
+    =
+    \underbrace{
+    \begin{bmatrix}
+    \dot{x} \\
+    -\frac{f}{M} \sin(\theta + \varphi) \\
+    \dot{y} \\
+    \frac{f}{M} \cos(\theta + \varphi) - g \\
+    \dot{\theta} \\
+    -\frac{3f}{4M\ell} \sin(\varphi)
+    \end{bmatrix}
+    }_{F(X,u)}
+    \]
+
+    ---
+
+
+
+    On a l’équilibre \( (y_e, u_e) \) tel que :
+
+    \[
+    \theta = 0, \quad \varphi = 0, \quad f = Mg
+    \]
+
+    \[
+    \dot{x} = \dot{y} = \dot{\theta} = 0
+    \]
+
+    Donc l’équilibre est :
+
+    \[
+    X_e =
+    \begin{bmatrix}
+    x_0 \\
+    0 \\
+    y_0 \\
+    0 \\
+    0 \\
+    0
+    \end{bmatrix},
+    \quad
+    u_e =
+    \begin{bmatrix}
+    Mg \\
+    0
+    \end{bmatrix}
+    \]
+
+     De tout système dynamique ayant un équilibre (Xe,ue), nous pouvons définir le système linéaire suivant:
+
+    \[
+    \Delta X = X - X_e, \quad \Delta u = u - u_e
+    \]
+
+    et :
+
+    \[
+    \frac{d}{dt} \Delta X \approx A \Delta X + B \Delta u
+    \]
+
+    où :
+
+    \[
+    A = \left. \frac{\partial F}{\partial X} \right|_{X_e, u_e}, \quad
+    B = \left. \frac{\partial F}{\partial u} \right|_{X_e, u_e}
+    \]
+
     """
     )
     return
