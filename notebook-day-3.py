@@ -1685,6 +1685,48 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
+    ### Interprétation
+
+    \( h \) est un point de la tige se situant à une distance de \( \frac{\ell}{3} \) par rapport au centre de masse. Il est toujours **au-dessus** du centre de masse dans le repère propre à la tige.
+
+    Voici un graphe illustrant les positions de \( h \) et \( C \) (centre de masse) pour différentes valeurs de :
+
+    \[
+    \theta
+    \]
+
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(l, np, plt):
+
+
+    theta_vals = np.linspace(-np.pi, np.pi, 100)  # De -pi à pi
+
+    # Centre de masse (x, y)
+    x_cm = -l * np.sin(theta_vals)
+    y_cm = l * np.cos(theta_vals)
+
+    # Point h
+    x_h = x_cm-(l/3) * np.sin(theta_vals)
+    y_h = y_cm+(l/3) * np.cos(theta_vals)
+
+    # Tracé
+    plt.figure(figsize=(8, 8))
+    plt.plot(x_cm, y_cm, label='Centre de masse (x, y)', color='blue')
+    plt.plot(x_h, y_h, label='Point h', color='red')
+    plt.scatter([0], [0], color='black', label='Pivot (origine)')
+
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
     ## 🧩 First and Second-Order Derivatives
 
     Compute $\dot{h}$ as a function of $\dot{x}$, $\dot{y}$, $\theta$ and $\dot{\theta}$ (and constants) and then $\ddot{h}$ as a function of $\theta$ and $z$ (and constants) when the auxiliary system is plugged in the booster.
