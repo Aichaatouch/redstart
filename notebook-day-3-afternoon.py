@@ -1994,6 +1994,27 @@ def _(mo):
     return
 
 
+@app.cell
+def _(M, g, l, np):
+
+    def T(x, dx, y, dy, theta, dtheta, z, dz):
+        h_x = x - (l / 3) * np.sin(theta)
+        h_y = y + (l / 3) * np.cos(theta)
+
+        dh_x = dx - (l / 3) * np.cos(theta) * dtheta
+        dh_y = dy - (l / 3) * np.sin(theta) * dtheta
+
+        d2h_x = (1/M) * np.sin(theta) * z - 0
+        d2h_y = -(1/M) * np.cos(theta) * z - g
+
+        d3h_x = (1/M) * (np.cos(theta) * dtheta * z + np.sin(theta) * dz)
+        d3h_y = (1/M) * (np.sin(theta) * dtheta * z - np.cos(theta) * dz)
+
+        return h_x, h_y, dh_x, dh_y, d2h_x, d2h_y, d3h_x, d3h_y
+
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
@@ -2006,6 +2027,127 @@ def _(mo):
     Implement the corresponding function `T_inv`.
     """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+
+
+    On veut récupérer \( \theta \) et \( z \) à partir de \( \ddot{h} \)
+
+    On part de :
+
+    \[
+    \ddot{h} = \frac{1}{M}
+    \begin{bmatrix}
+    \sin \theta \\
+    -\cos \theta
+    \end{bmatrix} z
+    -
+    \begin{bmatrix}
+    0 \\
+    g
+    \end{bmatrix}
+    \]
+
+    On définit :
+
+    \[
+    v := \ddot{h} + \begin{bmatrix} 0 \\ g \end{bmatrix}
+    = \frac{z}{M}
+    \begin{bmatrix}
+    \sin \theta \\
+    -\cos \theta
+    \end{bmatrix}
+    \]
+
+    On en déduit :
+
+    - \( \theta = \arctan2(v_x, -v_y) \)
+    - \( z = M \cdot \|v\| \)
+
+    ensuite  \( \dot{\theta} \) et \( \dot{z} \) à partir de \( h^{(3)} \)
+
+    On utilise :
+
+    \[
+    h^{(3)} = \frac{1}{M} R\left(\theta - \frac{\pi}{2} \right)
+    \begin{bmatrix}
+    \dot{z} \\
+    z \dot{\theta}
+    \end{bmatrix}
+    \]
+
+    On en déduit :
+
+    \[
+    \begin{bmatrix}
+    \dot{z} \\
+    z \dot{\theta}
+    \end{bmatrix}
+    = M \cdot R\left(\frac{\pi}{2} - \theta\right)
+    \cdot h^{(3)}
+    \]
+
+    Donc :
+
+    - \( \dot{z} = \text{1ère coordonnée} \)
+    - \( \dot{\theta} = \frac{1}{z} \times \text{2e coordonnée} \)
+
+     Enfin \( x, \dot{x}, y, \dot{y} \) à partir de \( h, \dot{h}, \theta, \dot{\theta} \)
+
+    À partir de la géométrie du booster :
+
+    \[
+    h_x = x - \frac{\ell}{3} \sin \theta \Rightarrow
+    x = h_x + \frac{\ell}{3} \sin \theta
+    \]
+
+    \[
+    h_y = y + \frac{\ell}{3} \cos \theta \Rightarrow
+    y = h_y - \frac{\ell}{3} \cos \theta
+    \]
+
+    \[
+    \dot{h}_x = \dot{x} - \frac{\ell}{3} \cos \theta \cdot \dot{\theta} \Rightarrow
+    \dot{x} = \dot{h}_x + \frac{\ell}{3} \cos \theta \cdot \dot{\theta}
+    \]
+
+    \[
+    \dot{h}_y = \dot{y} - \frac{\ell}{3} \sin \theta \cdot \dot{\theta} \Rightarrow
+    \dot{y} = \dot{h}_y + \frac{\ell}{3} \sin \theta \cdot \dot{\theta}
+    \]
+
+
+
+    """
+    )
+    return
+
+
+@app.cell
+def _(M, g, l, np):
+    def T_inv(h_x, h_y, dh_x, dh_y, d2h_x, d2h_y, d3h_x, d3h_y):
+        v = np.array([d2h_x, d2h_y + g])
+        theta = np.arctan2(v[0], -v[1]) 
+        z = M * np.linalg.norm(v)
+        R_theta = np.array([
+            [np.sin(theta), -np.cos(theta)],
+            [np.cos(theta),  np.sin(theta)]
+        ])
+        d3h = np.array([d3h_x, d3h_y])
+        inv_input = np.linalg.solve(R_theta, M * d3h)
+        dz = inv_input[0]
+        dtheta = inv_input[1] / z
+        x = h_x + (l / 3) * np.sin(theta)
+        y = h_y - (l / 3) * np.cos(theta)
+        dx = dh_x + (l / 3) * np.cos(theta) * dtheta
+        dy = dh_y + (l / 3) * np.sin(theta) * dtheta
+        return x, dx, y, dy, theta, dtheta, z, dz
+
     return
 
 
