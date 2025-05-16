@@ -2193,6 +2193,103 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
+    Réponse:
+
+    D’après la question précédente, la donnée de \( x, \dot{x}, y, \dot{y}, \theta, \dot{\theta} \) et \( z, \dot{z} \) permet d’obtenir les dérivées de \( h \) : \( h, \dot{h}, \ddot{h}, h^{(3)} \)
+
+    Et la connaissance de \( \ddot{h} \) et \( \theta \) permet de connaître \( f \) :
+
+    \[
+    f = M \cdot \left\| \ddot{h} + \begin{bmatrix} 0 \\ g \end{bmatrix} \right\|
+    \]
+
+    avec la force \( f \) portée par le vecteur d’angle \( \theta + \phi \) (c’est la direction de la poussée).
+
+    En faisant donc un produit scalaire avec le vecteur 
+
+    \[
+    b = \begin{bmatrix} -\sin \theta \\ \cos \theta \end{bmatrix}
+    \]
+
+    on trouve que :
+
+    \[
+    \cos(\phi) = \frac{F \cdot b}{\|F\|} \quad \Rightarrow \quad \phi = \arccos\left( \frac{F \cdot b}{\|F\|} \right)
+    \]
+
+    ---
+
+    Maintenant, pour respecter les conditions initiales et finales de chacune des variables \( x, y, \theta, z \),  
+    on peut choisir de considérer chacune d’entre elles comme un **polynôme de degré 3** et de déterminer ses coefficients.
+
+    """
+    )
+    return
+
+
+@app.cell
+def _(np):
+    def make_poly_interp(t0, tf, y0, dy0, yf, dyf):
+        T = tf - t0
+        A = np.array([
+            [0, 0, 0, 1],
+            [0, 0, 1, 0],
+            [T**3, T**2, T, 1],
+            [3*T**2, 2*T, 1, 0],
+        ])
+        b = np.array([y0, dy0, yf, dyf])
+        coeffs = np.linalg.solve(A, b)
+    
+        def poly(t):
+            tau = t - t0
+            return coeffs[0]*tau**3 + coeffs[1]*tau**2 + coeffs[2]*tau + coeffs[3]
+    
+        def dpoly(t):
+            tau = t - t0
+            return 3*coeffs[0]*tau**2 + 2*coeffs[1]*tau + coeffs[2]
+    
+        def ddpoly(t):
+            tau = t - t0
+            return 6*coeffs[0]*tau + 2*coeffs[1]
+    
+        return poly, dpoly, ddpoly
+
+    def compute(
+        x_0, dx_0, y_0, dy_0, theta_0, dtheta_0, z_0, dz_0,
+        x_tf, dx_tf, y_tf, dy_tf, theta_tf, dtheta_tf, z_tf, dz_tf,
+        tf,
+        M=1.0, g=1.0, l=1.0
+    ):
+        x, dx, ddx = make_poly_interp(0, tf, x_0, dx_0, x_tf, dx_tf)
+        y, dy, ddy = make_poly_interp(0, tf, y_0, dy_0, y_tf, dy_tf)
+        theta, dtheta, ddtheta = make_poly_interp(0, tf, theta_0, dtheta_0, theta_tf, dtheta_tf)
+        z, dz, ddz = make_poly_interp(0, tf, z_0, dz_0, z_tf, dz_tf)
+
+        def fun(t):
+            xt, dxt, ddxt = x(t), dx(t), ddx(t)
+            yt, dyt, ddyt = y(t), dy(t), ddy(t)
+            thetat, dthetat, ddthetat = theta(t), dtheta(t), ddtheta(t)
+            zt, dz_t, ddz_t = z(t), dz(t), ddz(t)
+
+            ddh_x = ddxt - (l / 3) * (np.cos(thetat) * dthetat**2 + np.sin(thetat) * ddthetat)
+            ddh_y = ddyt - (l / 3) * (np.sin(thetat) * dthetat**2 - np.cos(thetat) * ddthetat)
+
+            F_vec = np.array([ddh_x, ddh_y + g])
+            f = M * np.linalg.norm(F_vec)
+            thrust_dir = F_vec / np.linalg.norm(F_vec)
+            booster_dir = np.array([np.sin(thetat), -np.cos(thetat)])
+            dot_prod = np.clip(np.dot(thrust_dir, booster_dir), -1.0, 1.0)
+            phi = np.arccos(dot_prod)
+            return np.array([xt, dxt, yt, dyt, thetat, dthetat, zt, dz_t, f, phi])
+        return fun
+
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
     ## 🧩 Graphical Validation
 
     Test your `compute` function with
